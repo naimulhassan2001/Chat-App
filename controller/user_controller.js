@@ -85,4 +85,76 @@ controller.changePassword = catchError(async (req, res) => {
   });
 });
 
+controller.deleteUser = catchError(async (req, res) => {
+  console.log(req.user);
+  let user = await userService.findByEmail(req.user.email);
+
+  const isValidPassword = await checkPassword(req.body.password, user.password);
+
+  if (!isValidPassword) {
+    throw new createError(403, "current password is invalid");
+  }
+
+  user.name = `${process.env.APP_NAME} User`;
+  user.password = process.env.default_password;
+  user.email = process.env.default_email;
+  user.image = process.env.default_image;
+  user.number = "";
+
+  await user.save();
+
+  user = user.toObject();
+
+  delete user.password;
+  delete user.__v;
+
+  res.json({
+    Status: true,
+    Message: "user delete successfully",
+    data: user,
+  });
+});
+
+controller.editProfile = catchError(async (req, res) => {
+  const name = req.body.name ? req.body.name : false;
+  const email = req.body.email ? req.body.email : false;
+  const number = req.body.number ? req.body.number : false;
+  const image =
+    req.files && req.files.length > 0 ? req.files[0].filename : false;
+
+  if (name || email || number || image) {
+    let user = await userService.findByEmail(req.user.email);
+    if (name) {
+      user.name = name;
+    }
+
+    if (email) {
+      user.email = email;
+    }
+
+    if (number) {
+      user.number = number;
+    }
+
+    if (image) {
+      user.image = `uploads/users/${image}`;
+    }
+
+    await user.save();
+
+    user = user.toObject();
+
+    delete user.password;
+    delete user.__v;
+
+    res.json({
+      Status: true,
+      Message: "profile update successfully",
+      data: user,
+    });
+  } else {
+    throw new createError(400, "bad request");
+  }
+});
+
 module.exports = controller;

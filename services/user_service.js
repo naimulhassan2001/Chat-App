@@ -15,7 +15,7 @@ service.save = async (req) => {
       const newUser = new UserModel({
         ...req.body,
         password: hashPassword,
-        image: filename,
+        image: `${"uploads/users/"}filename`,
       });
       userData = await newUser.save();
     } else {
