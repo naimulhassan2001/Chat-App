@@ -5,6 +5,7 @@ const { globalRrrorHandler, notFoundRoute } = require("./common/error");
 const mainRouter = require("./router/main_router");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const socketIo = require("./services/socker_service");
 
 const app = express();
 dotenv.config();
@@ -19,15 +20,7 @@ const server = http.createServer(app);
 const io = soket_io(server);
 global.io = io;
 
-io.on("connection", (soket) => {
-  soket.on("test", (data, callback) => {
-    console.log(data);
-
-    callback("Naimul Hassan");
-  });
-
-  console.log("client connected");
-});
+socketIo(io);
 
 app.use(express.json());
 

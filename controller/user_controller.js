@@ -6,6 +6,8 @@ const { checkToken, createToken } = require("../services/token_service");
 const userService = require("../services/user_service");
 const { catchError } = require("../common/error");
 const password = require("../services/hash_password");
+const { unlink } = require("fs");
+const path = require("path");
 
 const controller = express();
 
@@ -95,6 +97,9 @@ controller.deleteUser = catchError(async (req, res) => {
     throw new createError(403, "current password is invalid");
   }
 
+  const imagePath = user.image;
+  unlink(path.join(__dirname, `../${imagePath}`), (err) => console.log(err));
+
   user.name = `${process.env.APP_NAME} User`;
   user.password = process.env.default_password;
   user.email = process.env.default_email;
@@ -111,7 +116,6 @@ controller.deleteUser = catchError(async (req, res) => {
   res.json({
     Status: true,
     Message: "user delete successfully",
-    data: user,
   });
 });
 
@@ -137,6 +141,11 @@ controller.editProfile = catchError(async (req, res) => {
     }
 
     if (image) {
+      const imagePath = user.image;
+      unlink(path.join(__dirname, `../${imagePath}`), (err) =>
+        console.log(err)
+      );
+
       user.image = `uploads/users/${image}`;
     }
 

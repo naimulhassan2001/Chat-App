@@ -1,4 +1,3 @@
-const userModel = require("../model/people");
 const UserModel = require("../model/people");
 const { hash, checkPassword } = require("../services/hash_password");
 const createError = require("http-errors");
@@ -15,7 +14,7 @@ service.save = async (req) => {
       const newUser = new UserModel({
         ...req.body,
         password: hashPassword,
-        image: `${"uploads/users/"}filename`,
+        image: `uploads/users/${filename}`,
       });
       userData = await newUser.save();
     } else {
@@ -27,7 +26,7 @@ service.save = async (req) => {
     }
     userData = userData.toObject();
     delete userData.password;
-    delete user.__v;
+    delete userData.__v;
     return userData;
   } catch (error) {
     throw new createError(error);
@@ -36,7 +35,7 @@ service.save = async (req) => {
 
 service.find = async () => {
   try {
-    let users = await userModel.find();
+    let users = await UserModel.find();
     users = users.map((user) => {
       let userObj = user.toObject();
       delete userObj.password;
@@ -52,7 +51,7 @@ service.find = async () => {
 service.findById = async (id) => {
   try {
     if (id.length != 24) throw createError(400, "_id is invalid");
-    let user = await userModel.findOne({ _id: id });
+    let user = await UserModel.findOne({ _id: id });
     console.log(user);
 
     if (!user) {
@@ -70,7 +69,7 @@ service.findById = async (id) => {
 
 service.findByEmail = async (email) => {
   try {
-    let user = await userModel.findOne({ email });
+    let user = await UserModel.findOne({ email });
     console.log(user);
 
     if (!user) {
