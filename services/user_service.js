@@ -63,7 +63,7 @@ service.findById = async (id) => {
     delete user.__v;
     return user;
   } catch (err) {
-    throw err;
+    throw new createError(err);
   }
 };
 

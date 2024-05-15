@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const lastMessage = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false } // Prevent creating an _id field for this subdocument
+);
+
 const chatSchema = mongoose.Schema(
   {
     participants: [
@@ -15,17 +30,21 @@ const chatSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["group", "single", "community"],
+      enum: ["group", "single", "channel"],
       default: "single",
     },
-    groupAdmin: {
+    creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     image: {
       type: String,
-      default: "/uploads/group-chat/group-chat.png",
+      default: "",
+    },
+    lastMessage: {
+      type: lastMessage,
+      default: null,
     },
   },
   {

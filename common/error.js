@@ -1,4 +1,4 @@
-
+const { log } = require("../helper/logger");
 
 const error = {};
 
@@ -6,6 +6,7 @@ error.catchError = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch((err) => {
       console.log(err);
+      log(err, req.originalUrl);
       next(err);
     });
   };
@@ -19,10 +20,8 @@ error.notFoundRoute = (req, res, next) => {
 };
 
 error.globalRrrorHandler = (err, req, res, next) => {
-  console.log("Global error handler middleware call");
+  log(err, req.originalUrl);
 
-  console.log(err.statusCode);
-  console.log(err.message);
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
 

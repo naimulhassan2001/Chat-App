@@ -1,0 +1,6 @@
+2024-05-15T20:21:38.256Z ["error"] socket error (Error Path: socket)
+2024-05-15T19:35:52.814Z ["error"] socket error (Error Path: socket)
+2024-05-15T19:32:43.565Z ["error"] socket error (Error Path: socket)
+2024-05-15T19:29:58.427Z ["error"] socket error (Error Path: socket)
+2024-05-15T19:25:40.859Z ["error"] {"message":"User not found"} (Error Path: /auth/sign-in)
+2024-05-15T19:25:40.852Z ["error"] {"message":"User not found"} (Error Path: /auth/sign-in)
