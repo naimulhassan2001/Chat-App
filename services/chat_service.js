@@ -61,4 +61,31 @@ service.getChatByParticipantId = async (filters) => {
   }
 };
 
+service.findByUserId = async (filters) => {
+  try {
+    const conversations = await Chat.find(filters).sort({
+      updatedAt: -1,
+    });
+    return conversations;
+  } catch (err) {
+    throw new createError(err);
+  }
+};
+
+service.deleteChatByChatId = async (id) => {
+  try {
+    const isDelete = await Chat.findByIdAndDelete(id);
+
+    console.log(isDelete);
+
+    if (!isDelete) {
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    throw new createError(err);
+  }
+};
+
 module.exports = service;

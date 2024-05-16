@@ -9,7 +9,7 @@ const password = require("../services/hash_password");
 const { unlink } = require("fs");
 const path = require("path");
 
-const controller = express();
+const controller = {};
 
 controller.createUser = catchError(async (req, res) => {
   const User = await userService.save(req);
