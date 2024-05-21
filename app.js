@@ -6,6 +6,7 @@ const mainRouter = require("./router/main_router");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const socketIo = require("./controller/socket_controller");
+const bodyParser = require('body-parser');
 
 const app = express();
 dotenv.config();
@@ -22,7 +23,9 @@ global.io = io;
 
 socketIo(io);
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(mainRouter);
 

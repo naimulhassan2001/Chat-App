@@ -7,7 +7,7 @@ service.addConversaton = async (messageBody) => {
   try {
     const conversation = new Conversation(messageBody);
     await conversation.save();
-    return conversation.populate("sender", "fullName image");
+    return conversation.populate("sender", "name image");
   } catch (err) {
     throw new createError(err);
   }
@@ -15,7 +15,7 @@ service.addConversaton = async (messageBody) => {
 
 service.findByChatId = async (filters) => {
   try {
-    const conversations = await Conversation.find(filters).sort({
+    const conversations = await Conversation.find(filters).populate('sender', 'name image').sort({
       createdAt: -1,
     });
     return conversations;

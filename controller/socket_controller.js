@@ -101,7 +101,7 @@ const socketIO = (io) => {
         const conversation = await addConversaton(data);
         // const eventName = "new-message::" + data.chat.toString();
         const eventName = "receive-message::" + data.chat.toString();
-        io.emit(eventName, data);
+        io.emit(eventName, conversation);
 
         const chat = await getChatById(data.chat);
 
@@ -132,7 +132,7 @@ const socketIO = (io) => {
         callback({
           status: "Success",
           message: "Message send successfully",
-          data: data,
+          data: conversation,
         });
       } catch (err) {
         log(err, "socket");

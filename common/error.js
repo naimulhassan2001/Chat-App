@@ -13,9 +13,10 @@ error.catchError = (fn) => {
 };
 
 error.notFoundRoute = (req, res, next) => {
+  console.log(req.body);
   res.status(405).json({
-    Status: false,
-    Message: "Request not acceptable",
+    status: false,
+    message: "Request not acceptable",
   });
 };
 
@@ -29,8 +30,8 @@ error.globalRrrorHandler = (err, req, res, next) => {
     next("There was a problem");
   } else {
     res.status(statusCode).json({
-      Status: false,
-      Message: message,
+      status: false,
+      message: message,
       data: {},
     });
   }

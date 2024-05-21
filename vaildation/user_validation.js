@@ -113,7 +113,7 @@ validation.validationHandler = (req, res, next) => {
     res.status(403).json({
       Status: false,
       Message: "Authorization failure!",
-      data: {},
+      data: errors,
     });
   }
 };
