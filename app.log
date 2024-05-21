@@ -1,3 +1,5 @@
+2024-05-21T11:46:42.250Z ["error"] {} (Error Path: /auth/sign-up)
+2024-05-21T11:46:42.239Z ["error"] {} (Error Path: /auth/sign-up)
 2024-05-16T07:48:16.988Z ["error"] {"message":"Authorization failure!"} (Error Path: /conversation/664470421f5e43d98b18c31f)
 2024-05-16T07:47:01.573Z ["error"] {"message":"Authorization failure!"} (Error Path: /chat)
 2024-05-16T07:46:03.567Z ["error"] {"message":"Authorization failure!"} (Error Path: /chat/66450ea78cead6d25930a98e)

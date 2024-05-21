@@ -12,12 +12,13 @@ const path = require("path");
 const controller = {};
 
 controller.createUser = catchError(async (req, res) => {
-  const User = await userService.save(req);
-  console.log(User);
+  const user = await userService.save(req);
+
+  const accessToken = createToken(user);
   res.json({
-    Status: true,
-    Message: "User created successfully",
-    data: User,
+    status: true,
+    message: "User created successfully",
+    data: { ...user, accessToken },
   });
 });
 
@@ -31,14 +32,13 @@ controller.signIn = catchError(async (req, res) => {
     throw new createError(403, "Authorization failure!");
   }
 
-  const accessToken = createToken(user);
-
   delete user.password;
   delete user.__v;
+  const accessToken = createToken(user);
 
   res.json({
-    Status: isValidPassword,
-    Message: "Log In successful",
+    status: isValidPassword,
+    message: "Log In successful",
     data: { ...user, accessToken },
   });
 });
@@ -46,8 +46,8 @@ controller.signIn = catchError(async (req, res) => {
 controller.getUser = catchError(async (req, res) => {
   const users = await userService.find();
   res.json({
-    Status: true,
-    Message: "User rectrive successfully",
+    status: true,
+    message: "User rectrive successfully",
     data: users,
   });
 });
@@ -55,8 +55,8 @@ controller.getUser = catchError(async (req, res) => {
 controller.getSingleUser = catchError(async (req, res) => {
   const user = await userService.findById(req.params.id);
   res.json({
-    Status: true,
-    Message: "User rectrive successfully",
+    status: true,
+    message: "User rectrive successfully",
     data: user,
   });
 });
@@ -81,8 +81,8 @@ controller.changePassword = catchError(async (req, res) => {
   delete user.__v;
 
   res.json({
-    Status: true,
-    Message: "password change successfully",
+    status: true,
+    message: "password change successfully",
     data: user,
   });
 });
@@ -114,8 +114,9 @@ controller.deleteUser = catchError(async (req, res) => {
   delete user.__v;
 
   res.json({
-    Status: true,
-    Message: "user delete successfully",
+    status: true,
+    message: "user delete successfully",
+    data: {},
   });
 });
 
@@ -157,8 +158,8 @@ controller.editProfile = catchError(async (req, res) => {
     delete user.__v;
 
     res.json({
-      Status: true,
-      Message: "profile update successfully",
+      status: true,
+      message: "profile update successfully",
       data: user,
     });
   } else {

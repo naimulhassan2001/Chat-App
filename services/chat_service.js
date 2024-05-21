@@ -57,7 +57,8 @@ service.getChatByParticipantId = async (filters) => {
     return { chatList, pagination };
   } catch (error) {
     console.error(error);
-    throw error;
+    throw new createError(err);
+  
   }
 };
 

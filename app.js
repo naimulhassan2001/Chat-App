@@ -5,7 +5,7 @@ const { globalRrrorHandler, notFoundRoute } = require("./common/error");
 const mainRouter = require("./router/main_router");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const socketIo = require("./services/socker_service");
+const socketIo = require("./controller/socket_controller");
 
 const app = express();
 dotenv.config();

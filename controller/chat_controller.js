@@ -14,8 +14,8 @@ controller.getFindbyuserId = catchError(async (req, res) => {
   const conversations = await findByUserId({ participants: req.user._id });
 
   res.json({
-    Status: true,
-    Message: "Chat retrieved successfully",
+    status: true,
+    message: "Chat retrieved successfully",
     data: conversations,
   });
 });
@@ -27,16 +27,16 @@ controller.deleteChat = catchError(async (req, res) => {
 
   if (!isDelete) {
     res.status(404).json({
-      Status: true,
-      Message: "Chat Room not found",
+      status: true,
+      message: "Chat Room not found",
       data: {},
     });
     return;
   }
 
   res.json({
-    Status: true,
-    Message: "Chat deleted successfully",
+    status: true,
+    message: "Chat deleted successfully",
     data: {},
   });
 });
