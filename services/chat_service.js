@@ -34,9 +34,10 @@ service.getChatByParticipants = async (data) => {
   }
 };
 
-service.getChatById = async (chatId) => {
+service.getChatById = async (id) => {
+  if (id.length != 24) throw createError(400, "id is invalid");
   try {
-    return await Chat.findById(chatId);
+    return await Chat.findById(id);
   } catch (error) {
     throw error;
   }
@@ -50,7 +51,7 @@ service.getChatByParticipantId = async (filters) => {
 
     const chatList = await Chat.find(filters).sort({ updatedAt: -1 });
 
-    const totalResults = await Chat.countDocuments(filters);
+    const totalResults = await Chat.countDocuments(filters).p;
     const totalPages = Math.ceil(totalResults / limit);
     const pagination = { totalResults, totalPages, currentPage: page, limit };
 
@@ -58,7 +59,6 @@ service.getChatByParticipantId = async (filters) => {
   } catch (error) {
     console.error(error);
     throw new createError(err);
-  
   }
 };
 

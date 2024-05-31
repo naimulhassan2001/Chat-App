@@ -8,10 +8,21 @@ const { catchError } = require("../common/error");
 const password = require("../services/hash_password");
 const { unlink } = require("fs");
 const path = require("path");
+const { sendMail } = require("../helper/email_sender");
 
 const controller = {};
 
 controller.createUser = catchError(async (req, res) => {
+  const info = {
+    type: "verification",
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const isSend = await sendMail(info);
+
+  console.log(info);
+
   const user = await userService.save(req);
 
   const accessToken = createToken(user);
@@ -23,9 +34,7 @@ controller.createUser = catchError(async (req, res) => {
 });
 
 controller.signIn = catchError(async (req, res) => {
-  let user = await userService.findByEmail(req.body.email);
-
-  user = user.toObject();
+  const user = await userService.findByEmail(req.body.email);
 
   const isValidPassword = await checkPassword(req.body.password, user.password);
   if (!isValidPassword) {
@@ -63,7 +72,7 @@ controller.getSingleUser = catchError(async (req, res) => {
 
 controller.changePassword = catchError(async (req, res) => {
   console.log(req.user);
-  let user = await userService.findByEmail(req.user.email);
+  const user = await userService.findByEmail(req.user.email);
 
   const isValidPassword = await checkPassword(req.body.password, user.password);
 
@@ -89,7 +98,7 @@ controller.changePassword = catchError(async (req, res) => {
 
 controller.deleteUser = catchError(async (req, res) => {
   console.log(req.user);
-  let user = await userService.findByEmail(req.user.email);
+  const user = await userService.findByEmail(req.user.email);
 
   const isValidPassword = await checkPassword(req.body.password, user.password);
 
@@ -128,7 +137,7 @@ controller.editProfile = catchError(async (req, res) => {
     req.files && req.files.length > 0 ? req.files[0].filename : false;
 
   if (name || email || number || image) {
-    let user = await userService.findByEmail(req.user.email);
+    const user = await userService.findByEmail(req.user.email);
     if (name) {
       user.name = name;
     }

@@ -35,13 +35,8 @@ service.save = async (req) => {
 
 service.find = async () => {
   try {
-    let users = await UserModel.find();
-    users = users.map((user) => {
-      let userObj = user.toObject();
-      delete userObj.password;
-      delete user.__v;
-      return userObj;
-    });
+    const users = await UserModel.find({}, "_id name email number image role");
+
     return users;
   } catch (error) {
     throw new createError(error);
@@ -51,16 +46,15 @@ service.find = async () => {
 service.findById = async (id) => {
   try {
     if (id.length != 24) throw createError(400, "_id is invalid");
-    let user = await UserModel.findOne({ _id: id });
+    const user = await UserModel.findOne(
+      { _id: id },
+      "_id name email number image role"
+    );
     console.log(user);
 
     if (!user) {
       throw new createError(404, "User not found");
     }
-
-    user = user.toObject();
-    delete user.password;
-    delete user.__v;
     return user;
   } catch (err) {
     throw new createError(err);
@@ -69,13 +63,17 @@ service.findById = async (id) => {
 
 service.findByEmail = async (email) => {
   try {
-    let user = await UserModel.findOne({ email });
+    let user = await UserModel.findOne(
+      { email },
+      "_id name email number image role password"
+    );
     console.log(user);
 
     if (!user) {
       throw new createError(404, "User not found");
     }
 
+    user = user.toObject();
     return user;
   } catch (err) {
     throw err;
