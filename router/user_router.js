@@ -17,6 +17,6 @@ const router = express.Router();
 
 router.get("/", getUser);
 router.get("/:id", getSingleUser);
-router.patch("/edit-profile", checkToken, imageUpload, editProfile);
+router.patch("/edit-profile", imageUpload, editProfile);
 
 module.exports = router;

@@ -19,10 +19,9 @@ service.createToken = (data) => {
 };
 
 service.checkToken = (req, res, next) => {
-  const { authorization, Cookie } = req.headers;
+  const { authorization} = req.headers;
 
-  console.log(' header Cookie:', Cookie);
-
+ 
   const userCookie = req.cookies['yourCookieName'];
     console.log('Cookie:', userCookie);
 
