@@ -5,7 +5,7 @@ const {
   editProfileValidation,
   validationHandler,
 } = require("../vaildation/user_validation");
-const { checkToken } = require("../services/token_service");
+const { checkToken } = require("../helper/generate_token");
 
 const {
   getUser,

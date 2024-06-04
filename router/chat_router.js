@@ -1,5 +1,5 @@
 const express = require("express");
-const { checkToken } = require("../services/token_service");
+const { checkToken } = require("../helper/generate_token");
 
 const {
   deleteChat,

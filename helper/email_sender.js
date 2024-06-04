@@ -38,7 +38,7 @@ helper.sendMail = async (info) => {
     console.log(mailOptions);
     const response = await transporter.sendMail(mailOptions);
     console.log("Email sent %s", response);
-    return true;
+    return otp;
   } catch (error) {
     console.error("Error sending mail", error);
     throw error;

@@ -63,9 +63,9 @@ service.findById = async (id) => {
 
 service.findByEmail = async (email) => {
   try {
-    let user = await UserModel.findOne(
+    const user = await UserModel.findOne(
       { email },
-      "_id name email number image role password"
+      "_id name email number image role password otp expireTime"
     );
     console.log(user);
 
@@ -73,7 +73,6 @@ service.findByEmail = async (email) => {
       throw new createError(404, "User not found");
     }
 
-    user = user.toObject();
     return user;
   } catch (err) {
     throw err;

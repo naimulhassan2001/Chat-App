@@ -2,13 +2,14 @@ const express = require("express");
 const UserModel = require("../model/people");
 const createError = require("http-errors");
 const { hash, checkPassword } = require("../services/hash_password");
-const { checkToken, createToken } = require("../services/token_service");
+const { checkToken, createToken } = require("../helper/generate_token");
 const userService = require("../services/user_service");
 const { catchError } = require("../common/error");
 const password = require("../services/hash_password");
 const { unlink } = require("fs");
 const path = require("path");
 const { sendMail } = require("../helper/email_sender");
+const { userData } = require("../helper/remove_unnecessary_user_data");
 
 const controller = {};
 
@@ -25,30 +26,32 @@ controller.createUser = catchError(async (req, res) => {
 
   const user = await userService.save(req);
 
-  const accessToken = createToken(user);
+  const token = createToken(user);
   res.json({
     status: true,
     message: "User created successfully",
-    data: { ...user, accessToken },
+    data: { user, token },
   });
 });
 
 controller.signIn = catchError(async (req, res) => {
-  const user = await userService.findByEmail(req.body.email);
+  let user = await userService.findByEmail(req.body.email);
+
+  user = user.toObject();
 
   const isValidPassword = await checkPassword(req.body.password, user.password);
   if (!isValidPassword) {
     throw new createError(403, "Authorization failure!");
   }
 
-  delete user.password;
-  delete user.__v;
-  const accessToken = createToken(user);
+  user = userData(user);
+
+  const token = createToken(user);
 
   res.json({
     status: isValidPassword,
     message: "Log In successful",
-    data: { ...user, accessToken },
+    data: { user, token },
   });
 });
 
@@ -72,9 +75,12 @@ controller.getSingleUser = catchError(async (req, res) => {
 
 controller.changePassword = catchError(async (req, res) => {
   console.log(req.user);
-  const user = await userService.findByEmail(req.user.email);
+  let user = await userService.findByEmail(req.user.email);
 
-  const isValidPassword = await checkPassword(req.body.password, user.password);
+  const isValidPassword = await checkPassword(
+    req.body.password,
+    user.toObject().password
+  );
 
   if (!isValidPassword) {
     throw new createError(403, "current password is invalid");
@@ -84,15 +90,10 @@ controller.changePassword = catchError(async (req, res) => {
 
   await user.save();
 
-  user = user.toObject();
-
-  delete user.password;
-  delete user.__v;
-
   res.json({
     status: true,
     message: "password change successfully",
-    data: user,
+    data: userData(user),
   });
 });
 
@@ -100,7 +101,10 @@ controller.deleteUser = catchError(async (req, res) => {
   console.log(req.user);
   const user = await userService.findByEmail(req.user.email);
 
-  const isValidPassword = await checkPassword(req.body.password, user.password);
+  const isValidPassword = await checkPassword(
+    req.body.password,
+    user.toObject().password
+  );
 
   if (!isValidPassword) {
     throw new createError(403, "current password is invalid");
@@ -116,11 +120,6 @@ controller.deleteUser = catchError(async (req, res) => {
   user.number = "";
 
   await user.save();
-
-  user = user.toObject();
-
-  delete user.password;
-  delete user.__v;
 
   res.json({
     status: true,
@@ -161,19 +160,68 @@ controller.editProfile = catchError(async (req, res) => {
 
     await user.save();
 
-    user = user.toObject();
-
-    delete user.password;
-    delete user.__v;
-
     res.json({
       status: true,
       message: "profile update successfully",
-      data: user,
+      data: userData(user)
     });
   } else {
     throw new createError(400, "bad request");
   }
 });
 
+controller.sendOtp = catchError(async (req, res) => {
+  const user = await userService.findByEmail(req.body.email);
+
+  const info = {
+    type: "forget-password",
+    name: user.name,
+    email: req.body.email,
+  };
+
+  const otp = await sendMail(info);
+
+  user.otp = otp;
+  user.expireTime = new Date(Date.now() + 3 * 60 * 1000);
+
+  await user.save();
+
+  res.json({
+    status: true,
+    message: "otp send successfully",
+    data: userData(user),
+  });
+});
+
+controller.verifyOtp = catchError(async (req, res) => {
+  let user = await userService.findByEmail(req.body.email);
+
+  user = user.toObject();
+
+  const userOtp = user.otp;
+  const requestOtp = req.body.otp;
+  const currentTime = new Date();
+
+  if (userOtp !== requestOtp) {
+    return res.status(404).json({
+      status: false,
+      message: "OTP is invalid",
+      data: {},
+    });
+  }
+
+  if (user.expireTime && currentTime > user.expireTime) {
+    return res.status(404).json({
+      status: false,
+      message: "OTP has expired",
+      data: {},
+    });
+  }
+
+  res.json({
+    status: true,
+    message: "OTP verified successfully",
+    data: userData(user),
+  });
+});
 module.exports = controller;
