@@ -45,6 +45,7 @@ service.find = async () => {
 
 service.findById = async (id) => {
   try {
+    console.log(id);
     if (id.length != 24) throw createError(400, "_id is invalid");
     const user = await UserModel.findOne(
       { _id: id },

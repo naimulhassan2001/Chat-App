@@ -31,7 +31,7 @@ router.post(
   createUser
 );
 
-router.post("/sign-in",checkToken, signInValidation, validationHandler, signIn);
+router.post("/sign-in", signInValidation, validationHandler, signIn);
 
 router.patch(
   "/change-password",

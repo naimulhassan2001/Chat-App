@@ -16,7 +16,7 @@ const schema = new mongoose.Schema(
     },
     number: {
       type: String,
-      default: null,
+      default: "",
       trim: true,
     },
     password: {
@@ -25,15 +25,15 @@ const schema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: null,
+      default: "",
     },
     otp: {
       type: String,
-      default: null,
+      default: "",
     },
     expireTime: {
       type: Date,
-      default: null,
+      default: "",
     },
     role: {
       type: String,

@@ -8,6 +8,7 @@ const { log } = require("../helper/logger");
 const { addNotification } = require("./notification_service");
 const { addConversaton } = require("./conversation_service");
 const Chat = require("../model/chat");
+const { findById } = require("./user_service");
 
 const socketIO = (io) => {
   // io.use((socket, next) => {
@@ -100,19 +101,21 @@ const socketIO = (io) => {
         data.messageType = "message";
         const conversation = await addConversaton(data);
         console.log(data.chat);
-       
-        const chat = await getChatById(data.chat);
 
-        
+        const chat = await getChatById(data.chat);
+        // const sender = await findById(data.sender);
+
         chat.participants.forEach(async (participant) => {
           if (participant.toString() !== data?.sender) {
             console.log(participant);
             const eventName = "receive-message::" + participant.toString();
-            io.emit(eventName, conversation);
+
+            const eventData = {
+              conversation,
+            };
+            io.emit(eventName, eventData);
           }
         });
-
-       
 
         console.log(chat);
 

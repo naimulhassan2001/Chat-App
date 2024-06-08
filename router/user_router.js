@@ -11,12 +11,15 @@ const {
   getUser,
   getSingleUser,
   editProfile,
+  getProfile,
 } = require("../controller/user_controller");
 
 const router = express.Router();
 
-router.get("/", getUser);
+router.get("/profile", checkToken, getProfile);
+
 router.get("/:id", getSingleUser);
-router.patch("/edit-profile", imageUpload, editProfile);
+router.patch("/edit-profile", checkToken, imageUpload, editProfile);
+router.get("/", checkToken, getUser);
 
 module.exports = router;

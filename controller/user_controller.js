@@ -24,7 +24,9 @@ controller.createUser = catchError(async (req, res) => {
 
   console.log(info);
 
-  const user = await userService.save(req);
+  let user = await userService.save(req);
+
+  user = userData(user);
 
   const token = createToken(user);
   res.json({
@@ -70,6 +72,15 @@ controller.getSingleUser = catchError(async (req, res) => {
     status: true,
     message: "User rectrive successfully",
     data: user,
+  });
+});
+
+controller.getProfile = catchError(async (req, res) => {
+  const user = await userService.findById(req.user._id);
+  res.json({
+    status: true,
+    message: "User rectrive successfully",
+    data: userData(user),
   });
 });
 
@@ -163,7 +174,7 @@ controller.editProfile = catchError(async (req, res) => {
     res.json({
       status: true,
       message: "profile update successfully",
-      data: userData(user)
+      data: userData(user),
     });
   } else {
     throw new createError(400, "bad request");
