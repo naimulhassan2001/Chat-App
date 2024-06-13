@@ -4,9 +4,10 @@ const createError = require("http-errors");
 
 const service = express();
 
-service.createToken = (data) => {
+service.createToken = (data, expiresIn = "1h") => {
+  console.log(expiresIn);
   const accessToken = jwt.sign(data, process.env.JWT_TOKEN_SECRET, {
-    expiresIn: "1h",
+    expiresIn: expiresIn,
   });
 
   const refreshToken = jwt.sign(data, process.env.JWT_REFRESH_TOKEN_SECRET, {
@@ -19,11 +20,10 @@ service.createToken = (data) => {
 };
 
 service.checkToken = (req, res, next) => {
-  const { authorization} = req.headers;
+  const { authorization } = req.headers;
 
- 
-  const userCookie = req.cookies['yourCookieName'];
-    console.log('Cookie:', userCookie);
+  const userCookie = req.cookies["yourCookieName"];
+  console.log("Cookie:", userCookie);
 
   console.log(authorization);
 
@@ -39,6 +39,44 @@ service.checkToken = (req, res, next) => {
     }
   } else {
     next(createError(401, "Authorization failure!"));
+  }
+};
+service.check = async (req, res, next) => {
+  try {
+    var forgetPasswordToken;
+    if (
+      req.headers["forget-password"] &&
+      req.headers["forget-password"].startsWith("Forget-password ")
+    ) {
+      forgetPasswordToken = req.headers["forget-password"].split(" ")[1];
+    }
+    if (!forgetPasswordToken) {
+      return res.status(400).json({
+        status: "Error",
+        statusCode: "400",
+        type: "user",
+        message: "unauthorised",
+      });
+    }
+
+    const tokenData = jwt.verify(
+      forgetPasswordToken,
+      process.env.JWT_TOKEN_SECRET
+    );
+    if (!tokenData) {
+      return res.status(400).json(
+        response({
+          status: "Error",
+          statusCode: "400",
+          type: "user",
+          message: "invalid-token",
+        })
+      );
+    }
+
+    next();
+  } catch (err) {
+    next(err);
   }
 };
 

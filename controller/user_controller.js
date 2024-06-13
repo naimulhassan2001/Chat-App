@@ -88,8 +88,10 @@ controller.changePassword = catchError(async (req, res) => {
   console.log(req.user);
   let user = await userService.findByEmail(req.user.email);
 
+  console.log(req.body);
+
   const isValidPassword = await checkPassword(
-    req.body.password,
+    req.body.oldPassword,
     user.toObject().password
   );
 
@@ -205,6 +207,7 @@ controller.sendOtp = catchError(async (req, res) => {
 });
 
 controller.verifyOtp = catchError(async (req, res) => {
+  console.log(req.body);
   let user = await userService.findByEmail(req.body.email);
 
   user = user.toObject();
@@ -229,10 +232,28 @@ controller.verifyOtp = catchError(async (req, res) => {
     });
   }
 
+  user = userData(user);
+
+  const { accessToken } = createToken(user, "3m");
+
   res.json({
     status: true,
     message: "OTP verified successfully",
+    data: { forgetPasswordToken: accessToken },
+  });
+});
+
+controller.resetPassword = catchError(async (req, res) => {
+  const user = await userService.findByEmail(req.body.email);
+  user.password = await hash(req.body.password);
+
+  await user.save();
+
+  res.json({
+    status: true,
+    message: "Password update successfully",
     data: userData(user),
   });
 });
+
 module.exports = controller;

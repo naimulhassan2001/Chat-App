@@ -52,7 +52,7 @@ validation.signInValidation = [
 ];
 
 validation.changePasswordValidation = [
-  check("password")
+  check("oldPassword")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 8 })

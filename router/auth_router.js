@@ -7,7 +7,8 @@ const {
   changePassword,
   deleteUser,
   sendOtp,
-  verifyOtp
+  verifyOtp,
+  resetPassword,
 } = require("../controller/user_controller");
 
 const {
@@ -19,7 +20,7 @@ const {
 } = require("../vaildation/user_validation");
 
 const { checkValidation } = require("../common/validationHandler");
-const { checkToken } = require("../helper/generate_token");
+const { checkToken, check } = require("../helper/generate_token");
 
 const router = express.Router();
 
@@ -51,5 +52,6 @@ router.delete(
 
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
+router.post("/reset-password", check, resetPassword);
 
 module.exports = router;
